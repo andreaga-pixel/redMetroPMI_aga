@@ -18,7 +18,20 @@ Cada fila es una estación. 17 estaciones en total.
 
 ## conexiones.csv (aristas, E)
 
-(Pendiente)
+Cada fila es un tramo entre dos estaciones consecutivas. 16 tramos en total.
+
+| Columna | Descripción | Ejemplo |
+|---|---|---|
+| origen | id de una de las estaciones del tramo | SC |
+| destino | id de la otra estación del tramo | SF |
+| lineas | Líneas que recorren el tramo, separadas por "\|" | M2 |
+| tiempo_min | Tiempo estimado del trayecto en minutos (simulado) | 2 |
+
+- Cada tramo aparece una sola vez. Como el grafo es no dirigido,
+  el programa lo guarda en los dos sentidos (origen → destino y destino → origen).
+- Los ids de origen y destino deben existir en estaciones.csv.
+- Orden: tronco común (PE-JV-SC), rama M1 (SC → PB) y rama M2 (SC → MA).
+- Los tiempos son simulados (entre 1 y 4 minutos) y no son datos oficiales.
 
 ## Formato
 
