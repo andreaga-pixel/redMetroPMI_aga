@@ -126,16 +126,27 @@ def cargar_grafo(fichero_estaciones, fichero_conexiones):
 # Programa principal: ejecución y verificación
 # ---------------------------------------------------------------
 if __name__ == "__main__":
+    #carga el grafo. 
+    #se pasan las dos rutas a cargar_grafo que lee los csv y devuelve el grafo construido.
+    #el grafo se guarda en una variable g. 
     g = cargar_grafo(CARPETA_DATOS / "estaciones.csv",
                      CARPETA_DATOS / "conexiones.csv")
-
+    #Mostrar la lista de adyacencia completa
     print("=== LISTA DE ADYACENCIA (listas enlazadas) ===")
-    g.mostrar()
+    g.mostrar() #llamada al método mostrar
 
-    n, m = g.num_nodos(), g.num_aristas()
+    #calcular los datos. He utilizado n y m porque son la terminologia que se suele usar el teoría de grafos
+    #para numero de nodos y de aristas. 
+    #seria lo mismo escribir:
+    #n = g.num_nodos()
+    #m = g.num_aristas()
+    n, m = g.num_nodos(), g.num_aristas() #manera abreviada
+    #suma de grados, se lee de dentro a fuera. 
     suma_grados = sum(g.grado(v) for v in g.cabeza)
+    #ejecuta el recorrido BFS y guarda el resultado en conexo
     conexo = g.es_conexo()
 
+    
     print("\n=== VERIFICACIONES ===")
     print(f"|V| = {n} estaciones")
     print(f"|E| = {m} tramos")
@@ -146,3 +157,4 @@ if __name__ == "__main__":
           [v for v in g.cabeza if g.grado(v) == 1])
     print("Estaciones de bifurcación (grado >= 3):",
           [v for v in g.cabeza if g.grado(v) >= 3])
+
