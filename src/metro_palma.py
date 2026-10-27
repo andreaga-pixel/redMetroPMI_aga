@@ -113,20 +113,36 @@ def cargar_grafo(fichero_estaciones, fichero_conexiones):
     # 1º las estaciones (nodos)
     with open(fichero_estaciones, encoding="utf-8") as f:
         for fila in csv.DictReader(f):
-            g.anadir_estacion(fila["id"], fila["nombre"],
-                              fila["lineas"].split("|"))
+            g.anadir_estacion(fila["id"], fila["nombre"], fila["lineas"].split("|"))
 
     # 2º las conexiones (aristas)
     with open(fichero_conexiones, encoding="utf-8") as f:
         for fila in csv.DictReader(f):
-            g.anadir_conexion(fila["origen"], fila["destino"],
-                              fila["lineas"].split("|"),
-                              int(fila["tiempo_min"]))
+            g.anadir_conexion(fila["origen"], fila["destino"], fila["lineas"].split("|"), int(fila["tiempo_min"]))
     return g
 
 
-g = cargar_grafo(CARPETA_DATOS / "estaciones.csv",
-                 CARPETA_DATOS / "conexiones.csv")
-g.mostrar()
-print("Nodos:", g.num_nodos(), "| Aristas:", g.num_aristas())
+# ---------------------------------------------------------------
+# Programa principal: ejecución y verificación
+# ---------------------------------------------------------------
+if __name__ == "__main__":
+    g = cargar_grafo(CARPETA_DATOS / "estaciones.csv",
+                     CARPETA_DATOS / "conexiones.csv")
 
+    print("=== LISTA DE ADYACENCIA (listas enlazadas) ===")
+    g.mostrar()
+
+    n, m = g.num_nodos(), g.num_aristas()
+    suma_grados = sum(g.grado(v) for v in g.cabeza)
+    conexo = g.es_conexo()
+
+    print("\n=== VERIFICACIONES ===")
+    print(f"|V| = {n} estaciones")
+    print(f"|E| = {m} tramos")
+    print(f"Suma de grados = {suma_grados} (lema del apretón de manos: 2|E| = {2 * m})")
+    print(f"¿Conexo? {conexo}")
+    print(f"¿Es un árbol (conexo y |E| = |V| - 1)? {conexo and m == n - 1}")
+    print("Estaciones terminales (grado 1):",
+          [v for v in g.cabeza if g.grado(v) == 1])
+    print("Estaciones de bifurcación (grado >= 3):",
+          [v for v in g.cabeza if g.grado(v) >= 3])
