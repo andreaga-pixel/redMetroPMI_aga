@@ -104,8 +104,29 @@ class GrafoMetro:
 
 
 
+# ---------------------------------------------------------------
+# Carga del dataset desde los ficheros CSV
+# ---------------------------------------------------------------
+def cargar_grafo(fichero_estaciones, fichero_conexiones):
+    g = GrafoMetro()
+
+    # 1º las estaciones (nodos)
+    with open(fichero_estaciones, encoding="utf-8") as f:
+        for fila in csv.DictReader(f):
+            g.anadir_estacion(fila["id"], fila["nombre"],
+                              fila["lineas"].split("|"))
+
+    # 2º las conexiones (aristas)
+    with open(fichero_conexiones, encoding="utf-8") as f:
+        for fila in csv.DictReader(f):
+            g.anadir_conexion(fila["origen"], fila["destino"],
+                              fila["lineas"].split("|"),
+                              int(fila["tiempo_min"]))
+    return g
 
 
-
-
+g = cargar_grafo(CARPETA_DATOS / "estaciones.csv",
+                 CARPETA_DATOS / "conexiones.csv")
+g.mostrar()
+print("Nodos:", g.num_nodos(), "| Aristas:", g.num_aristas())
 
