@@ -104,17 +104,6 @@ class GrafoMetro:
 
 
 
-g = GrafoMetro()
-g.anadir_estacion("PE", "Plaça d'Espanya", ["M1", "M2"])
-g.anadir_estacion("JV", "Jacint Verdaguer", ["M1", "M2"])
-g.anadir_estacion("SC", "Son Costa - Son Fortesa", ["M1", "M2"])
-g.anadir_conexion("PE", "JV", ["M1", "M2"], 2)
-g.anadir_conexion("JV", "SC", ["M1", "M2"], 2)
-g.mostrar()
-print("Grado de JV:", g.grado("JV"))
-print("Nodos:", g.num_nodos(), "| Aristas:", g.num_aristas())
-print("¿Conexo?", g.es_conexo())
-
 
 
 
