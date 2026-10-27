@@ -146,7 +146,7 @@ if __name__ == "__main__":
     #ejecuta el recorrido BFS y guarda el resultado en conexo
     conexo = g.es_conexo()
 
-    
+
     print("\n=== VERIFICACIONES ===")
     print(f"|V| = {n} estaciones")
     print(f"|E| = {m} tramos")
@@ -157,4 +157,6 @@ if __name__ == "__main__":
           [v for v in g.cabeza if g.grado(v) == 1])
     print("Estaciones de bifurcación (grado >= 3):",
           [v for v in g.cabeza if g.grado(v) >= 3])
+
+
 
