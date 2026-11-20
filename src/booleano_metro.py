@@ -59,3 +59,69 @@ fallos_prueba = [(a, b) for a in V for b in V
                  if x_prueba[a][b] and not x_prueba[b][a]]
 print(f"Prueba (quitando SF -> SC): fallos = {fallos_prueba}")
 
+# ---------------------------------------------------------------
+# C2: SIN LAZOS  ->  L = x_PE,PE + x_JV,JV + ... + x_MA,MA
+# ---------------------------------------------------------------
+L = 0                       # empezamos en 0 (False)
+for a in V:
+    L = int(L or x[a][a])   # OR acumulado con la diagonal
+
+lazos = [a for a in V if x[a][a] == 1]   # qué estaciones tienen lazo
+C2 = int(not L)                          # la condición se cumple si L = 0
+
+print("\n=== C2: SIN LAZOS ===")
+print(f"Estaciones comprobadas (diagonal): {len(V)}")
+print(f"L = {L}")
+print(f"Estaciones con lazo: {lazos}")
+print(f"C2 = {C2}")
+
+# Prueba: provoco un lazo en SC en una copia de la matriz
+x_prueba2 = copy.deepcopy(x)
+x_prueba2["SC"]["SC"] = 1
+L_prueba = 0
+for a in V:
+    L_prueba = int(L_prueba or x_prueba2[a][a])
+print(f"Prueba (lazo en SC): L = {L_prueba}, estaciones con lazo = "
+      f"{[a for a in V if x_prueba2[a][a] == 1]}")
+
+
+# ---------------------------------------------------------------
+# C3: SERVICIO  ->  S_a = m1_a + m2_a   (simplificada)
+#                   S = S_PE · S_JV · ... · S_MA
+# ---------------------------------------------------------------
+m1 = {a: int("M1" in g.lineas[a]) for a in V}   # 1 si para la M1
+m2 = {a: int("M2" in g.lineas[a]) for a in V}   # 1 si para la M2
+
+S = 1                      # empezamos en 1 para el AND acumulado
+sin_servicio = []
+simplificacion_ok = True
+
+for a in V:
+    S_a = int(m1[a] or m2[a])                            # simplificada
+    S_larga = int((not m1[a] and m2[a]) or               # ¬m1·m2
+                  (m1[a] and not m2[a]) or               # + m1·¬m2
+                  (m1[a] and m2[a]))                     # + m1·m2
+    if S_a != S_larga:
+        simplificacion_ok = False
+    if S_a == 0:
+        sin_servicio.append(a)
+    S = int(S and S_a)                                   # AND acumulado
+
+C3 = S
+
+print("\n=== C3: SERVICIO ===")
+print(f"Estaciones donde para M1: {sum(m1.values())}")
+print(f"Estaciones donde para M2: {sum(m2.values())}")
+print(f"Estaciones sin ninguna línea: {sin_servicio}")
+print(f"¿Ecuación larga = simplificada en las 17? {simplificacion_ok}")
+print(f"C3 = {C3}")
+
+# Prueba: quito las dos líneas a PI en una copia
+m1_p, m2_p = dict(m1), dict(m2)
+m1_p["PI"], m2_p["PI"] = 0, 0
+S_prueba = 1
+for a in V:
+    S_prueba = int(S_prueba and (m1_p[a] or m2_p[a]))
+print(f"Prueba (PI sin líneas): S = {S_prueba}, sin servicio = "
+      f"{[a for a in V if not (m1_p[a] or m2_p[a])]}")
+
