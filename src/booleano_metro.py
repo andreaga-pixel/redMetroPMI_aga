@@ -26,3 +26,36 @@ print("x_PE,JV =", x["PE"]["JV"], "| x_SC,SF =", x["SC"]["SF"],
       "| x_SF,SC =", x["SF"]["SC"], "| x_PE,SC =", x["PE"]["SC"],
       "| x_PE,PE =", x["PE"]["PE"])
 
+# ---------------------------------------------------------------
+# C1: SIMETRÍA  ->  F_ab = x_ab · ¬x_ba   (detector de fallo)
+#                   ¬F_ab = ¬x_ab + x_ba  (versión De Morgan)
+# ---------------------------------------------------------------
+fallos_c1 = []          # aquí se guardan los pares que fallen
+de_morgan_ok = True     # pasa a False si De Morgan no coincide
+
+for a in V:
+    for b in V:
+        F = int(x[a][b] and not x[b][a])          # x_ab AND (NOT x_ba)
+        cumple = int((not x[a][b]) or x[b][a])    # (NOT x_ab) OR x_ba
+        if F == 1:
+            fallos_c1.append((a, b))
+        if cumple != int(not F):                  # ¿¬F_ab = ¬x_ab + x_ba?
+            de_morgan_ok = False
+
+C1 = int(len(fallos_c1) == 0)   # 1 si no hay ningún fallo
+
+print("\n=== C1: SIMETRÍA ===")
+print(f"Pares comprobados: {len(V) * len(V)}")
+print(f"Tramos de sentido único encontrados: {fallos_c1}")
+print(f"¿De Morgan coincide en todos los pares? {de_morgan_ok}")
+print(f"C1 = {C1}")
+
+# Prueba: provoco un tramo de sentido único en una COPIA de la matriz
+import copy
+x_prueba = copy.deepcopy(x)   # copia independiente: la red real no cambia
+x_prueba["SF"]["SC"] = 0      # quito el sentido SF -> SC
+
+fallos_prueba = [(a, b) for a in V for b in V
+                 if x_prueba[a][b] and not x_prueba[b][a]]
+print(f"Prueba (quitando SF -> SC): fallos = {fallos_prueba}")
+
