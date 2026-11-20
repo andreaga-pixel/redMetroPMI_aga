@@ -184,3 +184,22 @@ print(f"SC cerrada -> viajes posibles: {posibles_cierre} de {len(pares)} "
 print(f"SC cerrada -> viajes perdidos: {len(pares) - posibles_cierre}")
 
 
+# ---------------------------------------------------------------
+# SISTEMA DE VERIFICACIÓN  ->  RED_OK = C1 · C2 · C3 · C4
+# ---------------------------------------------------------------
+RED_OK = int(C1 and C2 and C3 and C4)
+
+print("\n=== SISTEMA DE VERIFICACIÓN DE LA RED ===")
+print(f"Escenario 1 (red real):        C1={C1} C2={C2} C3={C3} C4={C4} "
+      f"-> RED_OK = {RED_OK}")
+
+# Escenario 2: cierre de SC (reutilizo el resultado del apartado C4)
+C4_cierre = int(posibles_cierre == len(pares))
+print(f"Escenario 2 (SC cerrada):      C1={C1} C2={C2} C3={C3} C4={C4_cierre} "
+      f"-> RED_OK = {int(C1 and C2 and C3 and C4_cierre)}")
+
+# Escenario 3: tramo de sentido único (reutilizo la prueba de C1)
+C1_prueba = int(len(fallos_prueba) == 0)
+print(f"Escenario 3 (sentido único):   C1={C1_prueba} C2={C2} C3={C3} C4={C4} "
+      f"-> RED_OK = {int(C1_prueba and C2 and C3 and C4)}")
+
