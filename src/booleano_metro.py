@@ -125,3 +125,62 @@ for a in V:
 print(f"Prueba (PI sin líneas): S = {S_prueba}, sin servicio = "
       f"{[a for a in V if not (m1_p[a] or m2_p[a])]}")
 
+
+
+# ---------------------------------------------------------------
+# C4: CONECTIVIDAD  ->  V_ab = AND de las estaciones (o) y los
+#                       tramos (x) del camino de a a b
+# ---------------------------------------------------------------
+from itertools import combinations
+
+def camino(origen, destino):
+    # Recorrido BFS (como en es_conexo de la Parte 1), guardando
+    # desde qué estación se llega a cada una para reconstruir el camino
+    anterior = {origen: None}
+    cola = [origen]
+    while cola:
+        v = cola.pop(0)
+        for arista in g.vecinos(v):
+            if arista.destino not in anterior:
+                anterior[arista.destino] = v
+                cola.append(arista.destino)
+    ruta = [destino]
+    while ruta[-1] != origen:               # vuelvo hacia atrás
+        ruta.append(anterior[ruta[-1]])
+    return ruta[::-1]                       # le doy la vuelta
+
+def viaje_posible(a, b, o):
+    # V_ab = o_a · x_a,v1 · o_v1 · ... · o_b
+    ruta = camino(a, b)
+    V_ab = 1
+    for v in ruta:                          # AND de las estaciones
+        V_ab = int(V_ab and o[v])
+    for i in range(len(ruta) - 1):          # AND de los tramos
+        V_ab = int(V_ab and x[ruta[i]][ruta[i + 1]])
+    return V_ab
+
+pares = list(combinations(V, 2))            # todos los pares (a, b)
+
+# Escenario 1: red normal (todas las estaciones abiertas)
+o = {a: 1 for a in V}
+posibles = sum(viaje_posible(a, b, o) for a, b in pares)
+C4 = int(posibles == len(pares))
+
+print("\n=== C4: CONECTIVIDAD ===")
+print(f"Pares de estaciones (viajes): {len(pares)}")
+print(f"Red normal -> viajes posibles: {posibles}")
+print(f"C4 = {C4}")
+
+# Escenario 2: cierre de Son Costa - Son Fortesa
+o_cierre = dict(o)
+o_cierre["SC"] = 0
+print(f"\nCamino PB -> MA: {camino('PB', 'MA')}")
+print(f"SC cerrada -> V_JV,SF = {viaje_posible('JV', 'SF', o_cierre)}, "
+      f"V_PB,UIB = {viaje_posible('PB', 'UIB', o_cierre)}, "
+      f"V_PB,MA = {viaje_posible('PB', 'MA', o_cierre)}")
+posibles_cierre = sum(viaje_posible(a, b, o_cierre) for a, b in pares)
+print(f"SC cerrada -> viajes posibles: {posibles_cierre} de {len(pares)} "
+      f"({100 * posibles_cierre / len(pares):.1f} %)")
+print(f"SC cerrada -> viajes perdidos: {len(pares) - posibles_cierre}")
+
+
