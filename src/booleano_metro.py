@@ -203,3 +203,35 @@ C1_prueba = int(len(fallos_prueba) == 0)
 print(f"Escenario 3 (sentido único):   C1={C1_prueba} C2={C2} C3={C3} C4={C4} "
       f"-> RED_OK = {int(C1_prueba and C2 and C3 and C4)}")
 
+# ---------------------------------------------------------------
+# ESTRUCTURA DE LA RED: operaciones de conjuntos con matrices booleanas
+# ---------------------------------------------------------------
+# Una matriz booleana para cada línea (columna "lineas" de conexiones.csv)
+x_M1 = {a: {b: 0 for b in V} for a in V}
+x_M2 = {a: {b: 0 for b in V} for a in V}
+for a in V:
+    for arista in g.vecinos(a):
+        if "M1" in arista.lineas:
+            x_M1[a][arista.destino] = 1
+        if "M2" in arista.lineas:
+            x_M2[a][arista.destino] = 1
+
+def contar(m):
+    return sum(m[a][b] for a in V for b in V)
+
+# OR, AND y NOT casilla a casilla
+union = {a: {b: int(x_M1[a][b] or x_M2[a][b]) for b in V} for a in V}
+inter = {a: {b: int(x_M1[a][b] and x_M2[a][b]) for b in V} for a in V}
+compl = {a: {b: int(not x[a][b]) for b in V} for a in V}
+
+print("\n=== ESTRUCTURA DE LA RED (CONJUNTOS DE TRAMOS) ===")
+print(f"Tramos de M1: {contar(x_M1) // 2}")
+print(f"Tramos de M2: {contar(x_M2) // 2}")
+print(f"M1 ∪ M2 (OR):  {contar(union) // 2} tramos. ¿Es la red completa? {union == x}")
+print(f"M1 ∩ M2 (AND): {contar(inter) // 2} tramos: "
+      f"{[(a, b) for a in V for b in V if inter[a][b] and V.index(a) < V.index(b)]}")
+print(f"Complemento (NOT): {contar(compl)} casillas a 1")
+print(f"  -> tramos nuevos posibles (sin diagonal, sin repetir): "
+      f"{sum(compl[a][b] for a in V for b in V if a != b) // 2}")
+
+
