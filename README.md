@@ -14,6 +14,14 @@ G = (V, E) **no dirigido y ponderado**:
 La representación elegida es una **lista de adyacencia implementada con listas enlazadas**,
 adecuada para un grafo disperso como este.
 
+## Documentación
+
+La explicación completa de cada parte, con sus justificaciones, está en la carpeta [`docs`](docs/):
+
+- [Parte 1: Representación de la red de metro como grafo](docs/parte1.md)
+- [Parte 3: Aplicación de ecuaciones booleanas a la red de metro](docs/parte3.md)
+
+
 ## Estructura del repositorio
 
 ```
